@@ -1,88 +1,93 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Event {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  unitName: string;
+  unitName!: string;
+
+  @Column({ type: 'date' })
+  date!: Date;
+
+  @Column({ type: 'time', nullable: true })
+  time!: string;
 
   @Column()
-  date: string;
+  category!: string;
+
+  @Column()
+  eventSeverity!: string;
+
+  @Column()
+  eventOutcome!: string;
 
   @Column({ nullable: true })
-  time: string;
+  damageType!: string;
 
   @Column()
-  category: string;
-
-  @Column()
-  eventSeverity: string;
-
-  @Column()
-  eventOutcome: string;
+  location!: string;
 
   @Column({ nullable: true })
-  damageType: string;
-
-  @Column()
-  location: string;
+  locationDescription!: string;
 
   @Column({ nullable: true })
-  locationDescription: string;
-
-  @Column({ nullable: true })
-  weather: string;
+  weather!: string;
 
   @Column({ type: 'text' })
-  text: string;
+  text!: string;
 
   @Column()
-  unitActivityType: string;
+  unitActivityType!: string;
 
   @Column()
-  activityType: string;
+  activityType!: string;
 
   @Column({ nullable: true })
-  investigation: string;
+  investigation!: string;
 
   @Column({ type: 'simple-json' })
-  coordinates: {
+  coordinates!: {
     latitude: string;
     longitude: string;
   };
 
   @Column({ type: 'simple-json', nullable: true })
-  casualties: Array<{
+  casualties!: Array<{
     severity: string;
     count: number;
   }>;
 
   @Column({ nullable: true })
-  subSubCategoryOptions: string;
+  subSubCategoryOptions!: string;
 
   @Column({ type: 'text', nullable: true })
-  recommendations: string;
+  recommendations!: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  costAmount: number;
-
-  @Column({ nullable: true })
-  categorySubOptions: string;
+  @Column({ type: 'real', nullable: true })
+  costAmount!: number;
 
   @Column({ nullable: true })
-  subCategoryOptions: string;
+  categorySubOptions!: string;
 
   @Column({ nullable: true })
-  eventFactor: string;
+  subCategoryOptions!: string;
+
+  @Column({ nullable: true })
+  eventFactor!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({ default: 'בטיפול' })
-  status: string;
+  status!: string;
 
   @Column({ nullable: true })
-  imageUrl: string;
+  imageUrl!: string;
 }

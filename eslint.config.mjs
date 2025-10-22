@@ -1,35 +1,61 @@
-// @ts-check
-import eslint from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
 
-export default tseslint.config(
-  {
-    ignores: ['eslint.config.mjs'],
-  },
-  eslint.configs.recommended,
+import tseslint from 'typescript-eslint';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
+import eslintPluginUnicorn from 'eslint-plugin-unicorn';
+import eslintPluginSecurity from 'eslint-plugin-security';
+import eslintPluginImport from 'eslint-plugin-import';
+import globals from 'globals';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default [
   ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
   {
     languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.json'],
+        tsconfigRootDir: __dirname
+      },
       globals: {
         ...globals.node,
-        ...globals.jest,
-      },
-      sourceType: 'commonjs',
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
+        ...globals.browser
+      }
     },
-  },
-  {
+    plugins: {
+      prettier: eslintPluginPrettier,
+      unicorn: eslintPluginUnicorn,
+      security: eslintPluginSecurity,
+      import: eslintPluginImport
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: './tsconfig.json'
+        }
+      }
+    },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn',
-      "prettier/prettier": ["error", { endOfLine: "auto" }],
-    },
-  },
-);
+      'prettier/prettier': ['error', {
+        singleQuote: true,
+        trailingComma: 'all',
+        endOfLine: 'auto'
+      }],
+      'unicorn/prefer-query-selector': 'error',
+      'security/detect-object-injection': 'warn',
+      'import/no-unresolved': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-unsafe-argument': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/explicit-function-return-type': 'error',
+      'no-console': 'warn',
+      'eqeqeq': ['error', 'always'],
+      'curly': 'error',
+      'quotes': ['error', 'single'],
+      'semi': ['error', 'always']
+    }
+  }
+];

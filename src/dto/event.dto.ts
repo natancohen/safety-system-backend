@@ -1,34 +1,42 @@
-import { IsString, MaxLength, IsDateString, Validate, IsOptional, IsArray, IsNumber } from 'class-validator';
+import {
+  IsString,
+  MaxLength,
+  IsDateString,
+  Validate,
+  IsOptional,
+  IsArray,
+  IsNumber,
+} from 'class-validator';
 import { IsNotFutureDate } from '../validators/is-not-future-date';
 
 export class CreateEventDto {
   @IsString()
   @MaxLength(100)
-  unitName: string;
+  unitName!: string;
 
   @IsDateString()
   @Validate(IsNotFutureDate)
-  date: string;
+  date!: string;
 
   @IsOptional()
   @IsString()
   time?: string;
 
   @IsString()
-  category: string;
+  category!: string;
 
   @IsString()
-  eventSeverity: string;
+  eventSeverity!: string;
 
   @IsString()
-  eventOutcome: string;
+  eventOutcome!: string;
 
   @IsOptional()
   @IsString()
   damageType?: string;
 
   @IsString()
-  location: string;
+  location!: string;
 
   @IsOptional()
   @IsString()
@@ -40,13 +48,13 @@ export class CreateEventDto {
 
   @IsString()
   @MaxLength(800)
-  text: string;
+  text!: string;
 
   @IsString()
-  unitActivityType: string;
+  unitActivityType!: string;
 
   @IsString()
-  activityType: string;
+  activityType!: string;
 
   @IsOptional()
   @IsString()
