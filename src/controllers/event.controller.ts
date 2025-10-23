@@ -12,7 +12,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { EventService } from '../services/event.service';
-import { CreateEventDto } from '../dto/event.dto';
+import { CreateEventDto } from '../dto/creat-event.dto';
+import { Event } from '../entities/event.entity';
 import { extname } from 'path';
 
 @Controller('events')
@@ -34,59 +35,49 @@ export class EventController {
   async create(
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreateEventDto,
-  ): Promise<CreateEventDto> {
+  ): Promise<Event> {
     const imageUrl = file ? `/uploads/${file.filename}` : undefined;
 
-    const eventData = {
-      ...dto,
-      date: new Date(dto.date), // המרה מ־string ל־Date
+    const eventData: Partial<Event> = {
+      ...dto.rightColumn,
+      ...dto.middleColumn,
+      ...dto.leftColumn,
+      ...dto.fourthColumn,
+      date: new Date(dto.rightColumn.date),
       imageUrl,
     };
 
-    const event = await this.eventService.create(eventData);
-    return {
-      ...event,
-      date: event.date.toISOString(),
-    };
+    return await this.eventService.create(eventData);
   }
 
   @Get()
-  async findAll(): Promise<CreateEventDto[]> {
-    const events = await this.eventService.findAll();
-    return events.map((event) => ({
-      ...event,
-      date: event.date.toISOString(),
-    }));
+  async findAll(): Promise<Event[]> {
+    return await this.eventService.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<CreateEventDto> {
-    const event = await this.eventService.findOne(id);
-    return {
-      ...event,
-      date: event.date.toISOString(),
-    };
+  async findOne(@Param('id') id: number): Promise<Event> {
+    return await this.eventService.findOne(id);
   }
 
   @Patch(':id')
   async update(
     @Param('id') id: number,
     @Body() dto: Partial<CreateEventDto>,
-  ): Promise<CreateEventDto> {
-    const updatedData = {
-      ...dto,
-      date: dto.date ? new Date(dto.date) : undefined, // המרה אם קיים
+  ): Promise<Event> {
+    const updatedData: Partial<Event> = {
+      ...dto.rightColumn,
+      ...dto.middleColumn,
+      ...dto.leftColumn,
+      ...dto.fourthColumn,
+      date: dto.rightColumn?.date ? new Date(dto.rightColumn.date) : undefined,
     };
 
-    const event = await this.eventService.update(id, updatedData);
-    return {
-      ...event,
-      date: event.date.toISOString(),
-    };
+    return await this.eventService.update(id, updatedData);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<{ deleted: boolean }> {
+  async remove(@Param('id') id: number): Promise<{ deleted: boolean }> {
     return this.eventService.remove(id);
   }
 }

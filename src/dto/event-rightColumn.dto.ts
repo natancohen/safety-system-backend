@@ -14,7 +14,7 @@ export class EventRightColumnDto {
 
   @IsDateString()
   @Validate(IsNotFutureDate)
-  date!: string;
+  date!: Date;
 
   @IsOptional()
   @IsString()
