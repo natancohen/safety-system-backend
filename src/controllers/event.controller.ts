@@ -30,6 +30,12 @@ export class EventController {
           cb(null, uniqueName + extname(file.originalname));
         },
       }),
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
     }),
   )
   async create(

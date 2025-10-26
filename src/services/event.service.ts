@@ -33,7 +33,7 @@ export class EventService {
       throw new NotFoundException(`Event ${id} not found`);
     }
 
-    const updated = { ...event, ...dto };
+    const updated = this.eventRepo.merge(event, dto);
 
     if (dto.date) {
       updated.date = new Date(dto.date);

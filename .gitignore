@@ -1,7 +1,7 @@
-# compiled output
+# Compiled output
 /dist
-/node_modules
 /build
+/node_modules
 
 # Logs
 logs
@@ -12,15 +12,43 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# OS
-.DS_Store
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
-# Tests
+# Testing
 /coverage
 /.nyc_output
+jest.results.json
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db.sqlite
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # IDEs and editors
-/.idea
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea
+*.swp
+*.swo
+*~
 .project
 .classpath
 .c9/
@@ -28,32 +56,42 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# dotenv environment variable files
+# Environment variables
 .env
 .env.development.local
 .env.test.local
 .env.production.local
-.env.local
+.env.*.local
 
-# temp directory
+# Temporary files
 .temp
 .tmp
+tmp/
+*.tmp
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# NestJS specific
+dist/
+tsconfig.tsbuildinfo
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
+# IDE output
+.eslintcache
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Diagnostic reports
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-*.tsbuildinfo
-dist/
+# MacOS
+.AppleDouble
+.AppleDB
