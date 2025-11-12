@@ -1,27 +1,28 @@
-import { IsString, IsOptional, IsArray } from 'class-validator';
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class EventMiddleColumnDto {
   @IsOptional()
   @IsString()
-  eventFactor?: string;
+  eventFactorOptions?: string;
 
   @IsString()
-  eventResult!: string;
+  eventResultOptions!: string;
 
   @IsString()
   eventSeverity!: string;
 
   @IsString()
-  eventOutcome!: string;
+  eventOutcomeByCategory!: string;
 
   @IsOptional()
   @IsString()
   damageType?: string;
+}
 
-  @IsOptional()
-  @IsArray()
-  casualties?: Array<{
-    severity: string;
-    count: number;
-  }>;
+export class CasualtyDto {
+  @IsString()
+  severity!: string;
+
+  @IsNumber()
+  count!: number;
 }

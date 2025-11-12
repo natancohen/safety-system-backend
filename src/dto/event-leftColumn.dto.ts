@@ -1,4 +1,20 @@
-import { IsString, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  ValidateNested,
+  IsNumber,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+class CoordinatesDto {
+  @IsNumber()
+  @Type(() => Number)
+  latitude!: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  longitude!: number;
+}
 
 export class EventLeftColumnDto {
   @IsString()
@@ -13,8 +29,7 @@ export class EventLeftColumnDto {
   weather?: string;
 
   @IsOptional()
-  coordinates?: {
-    latitude: string;
-    longitude: string;
-  };
+  @ValidateNested()
+  @Type(() => CoordinatesDto)
+  coordinates?: CoordinatesDto;
 }

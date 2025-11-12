@@ -1,11 +1,13 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class EventFourthColumnDto {
   @IsOptional()
   @IsString()
-  investigation?: string;
+  recommendations?: string;
 
   @IsOptional()
-  @IsString()
-  recommendations?: string;
+  @Type(() => Number)
+  @IsNumber()
+  costAmount?: number;
 }

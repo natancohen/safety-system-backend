@@ -14,24 +14,23 @@ export class EventRightColumnDto {
 
   @IsDateString()
   @Validate(IsNotFutureDate)
-  date!: Date;
+  date!: string;
 
   @IsOptional()
   @IsString()
   time?: string;
 
   @IsString()
-  @MaxLength(800)
   text!: string;
 
   @IsString()
-  unitActivityType!: string;
+  unitActivityOptions!: string;
 
   @IsString()
-  activityType!: string;
+  activityOptions!: string;
 
   @IsString()
-  category!: string;
+  categoryOptions!: string;
 
   @IsOptional()
   @IsString()

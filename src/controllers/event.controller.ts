@@ -1,89 +1,148 @@
 import {
-  Controller,
-  UseInterceptors,
-  Post,
-  Get,
-  Delete,
   Body,
+  Controller,
+  Delete,
+  Get,
   Param,
-  UploadedFile,
+  ParseIntPipe,
   Patch,
+  Post,
+  UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UseInterceptors } from '@nestjs/common';
 import { diskStorage } from 'multer';
-import { EventService } from '../services/event.service';
-import { CreateEventDto } from '../dto/creat-event.dto';
-import { Event } from '../entities/event.entity';
 import { extname } from 'path';
+import { EventService, type FlatEvent } from '../services/event.service';
+import { CreateEventDto } from '../dto/create-event.dto';
+import { Event } from '../entities/event.entity';
+import { UpdateStatusDto } from '../dto/update-status.dto';
 
 @Controller('events')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Post()
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, uniqueName + extname(file.originalname));
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-          return cb(new Error('Only image files are allowed!'), false);
-        }
-        cb(null, true);
-      },
-    }),
-  )
-  async create(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() dto: CreateEventDto,
-  ): Promise<Event> {
-    const imageUrl = file ? `/uploads/${file.filename}` : undefined;
-
-    const eventData: Partial<Event> = {
-      ...dto.rightColumn,
-      ...dto.middleColumn,
-      ...dto.leftColumn,
-      ...dto.fourthColumn,
-      date: new Date(dto.rightColumn.date),
-      imageUrl,
-    };
-
-    return await this.eventService.create(eventData);
-  }
-
   @Get()
-  async findAll(): Promise<Event[]> {
-    return await this.eventService.findAll();
+  findAll(): Promise<FlatEvent[]> {
+    return this.eventService.findAllFlat();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<Event> {
-    return await this.eventService.findOne(id);
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<FlatEvent | null> {
+    return this.eventService.findOneFlat(id);
+  }
+
+  @Post()
+  async create(@Body() dto: CreateEventDto): Promise<FlatEvent> {
+    const flat = this.flatten(dto);
+    const saved = await this.eventService.create(flat);
+    const out = await this.eventService.findOneFlat(saved.id);
+    // out must exist since we just created it; fallback to basic entity if needed
+    return (
+      out ??
+      ({
+        id: saved.id,
+        unitName: saved.unitName,
+        date: saved.date,
+        time: saved.time ?? null,
+        text: saved.text,
+        unitActivityOptions: saved.unitActivityOptions,
+        activityOptions: saved.activityOptions,
+        categoryOptions: saved.categoryOptions,
+        categorySubOptions: saved.categorySubOptions ?? null,
+        subCategoryOptions: saved.subCategoryOptions ?? null,
+        subSubCategoryOptions: saved.subSubCategoryOptions ?? null,
+        eventFactorOptions: saved.eventFactorOptions ?? null,
+        eventResultOptions: saved.eventResultOptions,
+        eventSeverity: saved.eventSeverity,
+        eventOutcomeByCategory: saved.eventOutcomeByCategory,
+        damageType: saved.damageType ?? null,
+        location: saved.location,
+        locationDescription: saved.locationDescription ?? null,
+        weather: saved.weather ?? null,
+        latitude: saved.latitude ?? null,
+        longitude: saved.longitude ?? null,
+        recommendations: saved.recommendations ?? null,
+        costAmount: saved.costAmount ?? null,
+        status: saved.status as unknown as string,
+      } as FlatEvent)
+    );
   }
 
   @Patch(':id')
-  async update(
-    @Param('id') id: number,
-    @Body() dto: Partial<CreateEventDto>,
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: CreateEventDto,
   ): Promise<Event> {
-    const updatedData: Partial<Event> = {
-      ...dto.rightColumn,
-      ...dto.middleColumn,
-      ...dto.leftColumn,
-      ...dto.fourthColumn,
-      date: dto.rightColumn?.date ? new Date(dto.rightColumn.date) : undefined,
-    };
+    const flat = this.flatten(dto);
+    return this.eventService.update(id, flat);
+  }
 
-    return await this.eventService.update(id, updatedData);
+  @Patch(':id/status')
+  updateStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateStatusDto,
+  ): Promise<Event> {
+    return this.eventService.update(id, { status: dto.status });
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: number): Promise<{ deleted: boolean }> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<{ deleted: boolean }> {
     return this.eventService.remove(id);
+  }
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (_req, file, cb) => {
+          const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+          cb(null, `${unique}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  upload(@UploadedFile() file: Express.Multer.File): { url: string } {
+    return { url: `/uploads/${file.filename}` };
+  }
+
+  private flatten(dto: CreateEventDto): Partial<Event> {
+    const r = dto.rightColumn;
+    const m = dto.middleColumn;
+    const f = dto.fourthColumn;
+    const l = dto.leftColumn;
+
+    return {
+      // Right column
+      unitName: r.unitName,
+      date: r.date,
+      time: r.time,
+      text: r.text,
+      unitActivityOptions: r.unitActivityOptions,
+      activityOptions: r.activityOptions,
+      categoryOptions: r.categoryOptions,
+      categorySubOptions: r.categorySubOptions,
+      subCategoryOptions: r.subCategoryOptions,
+      subSubCategoryOptions: r.subSubCategoryOptions,
+
+      // Middle column
+      eventFactorOptions: m.eventFactorOptions,
+      eventResultOptions: m.eventResultOptions,
+      eventSeverity: m.eventSeverity,
+      eventOutcomeByCategory: m.eventOutcomeByCategory,
+      damageType: m.damageType,
+
+      // Left column
+      location: l.location,
+      locationDescription: l.locationDescription,
+      weather: l.weather,
+      latitude: l.coordinates?.latitude,
+      longitude: l.coordinates?.longitude,
+
+      // Fourth column
+      recommendations: f.recommendations,
+      costAmount: f.costAmount,
+    };
   }
 }

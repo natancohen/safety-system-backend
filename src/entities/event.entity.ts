@@ -1,93 +1,84 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
+export type EventStatus = 'בטיפול' | 'טופל';
+
+@Entity('event')
 export class Event {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  // ——— Right column ———
   @Column()
   unitName!: string;
 
   @Column({ type: 'date' })
-  date!: Date;
+  date!: string;
 
-  @Column({ type: 'time', nullable: true })
-  time!: string;
+  @Column({ nullable: true })
+  time?: string;
 
   @Column()
-  category!: string;
+  text!: string;
+
+  @Column()
+  unitActivityOptions!: string;
+
+  @Column()
+  activityOptions!: string;
+
+  @Column()
+  categoryOptions!: string;
+
+  @Column({ nullable: true })
+  categorySubOptions?: string;
+
+  @Column({ nullable: true })
+  subCategoryOptions?: string;
+
+  @Column({ nullable: true })
+  subSubCategoryOptions?: string;
+
+  // ——— Middle column ———
+  @Column({ nullable: true })
+  eventFactorOptions?: string;
+
+  @Column()
+  eventResultOptions!: string;
 
   @Column()
   eventSeverity!: string;
 
   @Column()
-  eventOutcome!: string;
+  eventOutcomeByCategory!: string;
 
   @Column({ nullable: true })
-  damageType!: string;
+  damageType?: string;
 
+  // ——— Left column ———
   @Column()
   location!: string;
 
   @Column({ nullable: true })
-  locationDescription!: string;
+  locationDescription?: string;
 
   @Column({ nullable: true })
-  weather!: string;
+  weather?: string;
 
-  @Column({ type: 'text' })
-  text!: string;
-
-  @Column()
-  unitActivityType!: string;
-
-  @Column()
-  activityType!: string;
-
-  @Column({ nullable: true })
-  investigation!: string;
-
-  @Column({ type: 'simple-json' })
-  coordinates!: {
-    latitude: string;
-    longitude: string;
-  };
-
-  @Column({ type: 'simple-json', nullable: true })
-  casualties!: Array<{
-    severity: string;
-    count: number;
-  }>;
-
-  @Column({ nullable: true })
-  subSubCategoryOptions!: string;
-
-  @Column({ type: 'text', nullable: true })
-  recommendations!: string;
+  // ב-SQLite סוג מספרי בטוח: REAL
+  @Column({ type: 'real', nullable: true })
+  latitude?: number;
 
   @Column({ type: 'real', nullable: true })
-  costAmount!: number;
+  longitude?: number;
 
+  // ——— Fourth column ———
   @Column({ nullable: true })
-  categorySubOptions!: string;
+  recommendations?: string;
 
-  @Column({ nullable: true })
-  subCategoryOptions!: string;
+  @Column({ type: 'real', nullable: true })
+  costAmount?: number;
 
-  @Column({ nullable: true })
-  eventFactor!: string;
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @Column({ default: 'בטיפול' })
-  status!: string;
-
-  @Column({ nullable: true })
-  imageUrl!: string;
+  // ——— Status ———
+  @Column({ type: 'varchar', default: 'בטיפול' })
+  status: EventStatus;
 }

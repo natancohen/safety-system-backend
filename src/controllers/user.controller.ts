@@ -1,4 +1,11 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { User } from '../entities/user.entity';
 
@@ -16,10 +23,16 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<User | null> {
+    return this.userService.findOne(id);
+  }
+
   @Get('theme/:id')
-  async getTheme(@Param('id') id: string): Promise<{ theme: string }> {
-    const userId = parseInt(id, 10);
-    return this.userService.getUserTheme(userId);
+  async getTheme(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ theme: string }> {
+    return this.userService.getUserTheme(id);
   }
 
   @Post('theme')

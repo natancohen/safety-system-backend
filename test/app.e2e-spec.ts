@@ -1,25 +1,42 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from '../src/modules/app.module';
+/// <reference types="jest" />
+import { Test, TestingModule } from "@nestjs/testing";
+import { INestApplication } from "@nestjs/common";
+import request from "supertest";
+import { AppModule } from "../src/modules/app.module";
+import { describe, it, expect, beforeAll, afterAll } from "@jest/globals";
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+describe("App e2e", () => {
+  let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix("api");
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it("GET /api should return Hello World!", async () => {
+    const res = await request(app.getHttpServer()).get("/api");
+    expect(res.status).toBe(200);
+    expect(res.text).toContain("Hello World!");
+  });
+
+  it("GET /api/events should return 200 with array", async () => {
+    const res = await request(app.getHttpServer()).get("/api/events");
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+  });
+
+  it("GET /api/users should return 200 with array", async () => {
+    const res = await request(app.getHttpServer()).get("/api/users");
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
   });
 });
