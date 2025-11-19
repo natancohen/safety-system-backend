@@ -14,9 +14,9 @@ import { UseInterceptors } from '@nestjs/common';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { EventService, type FlatEvent } from '../services/event.service';
-import { CreateEventDto } from '../dto/create-event.dto';
+import { CreateEventDto } from '../dto/create_event.dto';
 import { Event } from '../entities/event.entity';
-import { UpdateStatusDto } from '../dto/update-status.dto';
+import { UpdateStatusDto } from '../dto/update_status.dto';
 
 @Controller('events')
 export class EventController {

@@ -5,7 +5,7 @@ import {
   Validate,
   IsOptional,
 } from 'class-validator';
-import { IsNotFutureDate } from '../validators/is-not-future-date';
+import { IsNotFutureDate } from '../validators/is_not_future_date';
 
 export class EventRightColumnDto {
   @IsString()

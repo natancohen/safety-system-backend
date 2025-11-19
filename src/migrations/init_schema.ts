@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitSchemaNewColumns1725000000000 implements MigrationInterface {
-  name = 'InitSchemaNewColumns1725000000000';
+export class init_schema implements MigrationInterface {
+  name = 'init_schema';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Drop existing tables if they exist (dev-squash). This will erase data.
@@ -55,7 +55,7 @@ export class InitSchemaNewColumns1725000000000 implements MigrationInterface {
         "costAmount" real NULL,
 
         
-                "status" varchar NOT NULL DEFAULT 'çãù'
+                "status" varchar NOT NULL DEFAULT 'ï¿½ï¿½ï¿½'
       )
     `);
   }
